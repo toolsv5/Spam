@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Telegram Bot Manager - Modern Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Exo+2:wght@300;400;500;600&display=swap');
+  
+  :root {
+    --primary: #6c5ce7;
+    --primary-dark: #5649c0;
+    --secondary: #00cec9;
+    --accent: #fd79a8;
+    --dark: #2d3436;
+    --light: #f5f6fa;
+    --success: #00b894;
+    --danger: #e84393;
+    --warning: #fdcb6e;
+    --card-bg: rgba(255, 255, 255, 0.1);
+    --border-radius: 12px;
+    --transition: all 0.3s ease;
+  }
+  
+  .dark-theme {
+    --bg: #1a1a2e;
+    --text: #f5f6fa;
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+  
+  .light-theme {
+    --bg: #f0f2f5;
+    --text: #2d3436;
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Exo 2', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: var(--transition);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .logo-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    overflow: hidden;
+  }
+  
+  .logo-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .main-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .sub-title {
+    font-family: 'Exo 2', sans-serif;
+    font-size: 14px;
+    opacity: 0.8;
+    font-weight: 500;
+  }
+  
+  .theme-toggle {
+    background: var(--card-bg);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+  }
+  
+  .theme-toggle:hover {
+    transform: translateY(-2px);
+  }
+  
+  .dashboard {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+  }
+  
+  @media (max-width: 992px) {
+    .dashboard {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 25px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: var(--transition);
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .card-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .card-title i {
+    color: var(--primary);
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  input, select, textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    transition: var(--transition);
+  }
+  
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.2);
+  }
+  
+  .btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+  }
+  
+  .btn-secondary {
+    background: var(--secondary);
+    color: white;
+  }
+  
+  .btn-danger {
+    background: var(--danger);
+    color: white;
+  }
+  
+  .btn-full {
+    width: 100%;
+  }
+  
+  .tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .tab {
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: var(--transition);
+    border-bottom: 2px solid transparent;
+  }
+  
+  .tab.active {
+    border-bottom: 2px solid var(--primary);
+    color: var(--primary);
+  }
+  
+  .tab-content {
+    display: none;
+  }
+  
+  .tab-content.active {
+    display: block;
+  }
+  
+  .result-box {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+    font-family: monospace;
+    font-size: 14px;
+    white-space: pre-wrap;
+  }
+  
+  .status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .status-valid {
+    background: rgba(0, 184, 148, 0.2);
+    color: var(--success);
+  }
+  
+  .status-invalid {
+    background: rgba(232, 67, 147, 0.2);
+    color: var(--danger);
+  }
+  
+  .status-pending {
+    background: rgba(253, 203, 110, 0.2);
+    color: var(--warning);
+  }
+  
+  .spam-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  
+  @media (max-width: 576px) {
+    .spam-controls {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  .file-upload {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    width: 100%;
+  }
+  
+  .file-upload input[type="file"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+  
+  .file-upload-label {
+    display: block;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+  }
+  
+  .file-upload-label:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+  }
+  
+  .stat-card {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 10px 0;
+  }
+  
+  .stat-label {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+  
+  .pulse {
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(108, 92, 231, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(108, 92, 231, 0);
+    }
+  }
+  
+  .floating-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+  }
+  
+  .floating-element {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    opacity: 0.1;
+    animation: float 15s infinite linear;
+  }
+  
+  @keyframes float {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    33% {
+      transform: translate(30px, -50px) rotate(120deg);
+    }
+    66% {
+      transform: translate(-20px, 20px) rotate(240deg);
+    }
+    100% {
+      transform: translate(0, 0) rotate(360deg);
+    }
+  }
+  
+  .image-preview {
+    margin-top: 15px;
+    text-align: center;
+  }
+  
+  .image-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .image-preview p {
+    margin-top: 10px;
+    font-size: 14px;
+    opacity: 0.8;
+  }
+  
+  .hidden {
+    display: none !important;
+  }
+  
+  .connected-chats {
+    margin-top: 20px;
+  }
+  
+  .chat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: var(--transition);
+  }
+  
+  .chat-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .chat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+  }
+  
+  .chat-info {
+    flex: 1;
+  }
+  
+  .chat-name {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  
+  .chat-id {
+    font-size: 12px;
+    opacity: 0.7;
+  }
+  
+  .chat-type {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  
+  .chat-group {
+    background: rgba(0, 206, 201, 0.2);
+    color: var(--secondary);
+  }
+  
+  .chat-private {
+    background: rgba(108, 92, 231, 0.2);
+    color: var(--primary);
+  }
+  
+  .chat-channel {
+    background: rgba(253, 121, 168, 0.2);
+    color: var(--accent);
+  }
+  
+  .chat-supergroup {
+    background: rgba(253, 203, 110, 0.2);
+    color: var(--warning);
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .brand-logo {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    text-align: center;
+  }
+</style>  
+
+<audio id="audioPlayer" autoplay loop muted>  
+  <source id="audioSource" src="" type="audio/mp3">  
+</audio>  
+
+<script>
+  const audioFiles = [
+    "https://od.lk/s/OV8yNTUwNTI2NDZf/GALIRUS_OFFICIAL_1759577483.mp3",
+    "https://od.lk/s/OV8yNTUwNTI2NDhf/GALIRUS_OFFICIAL_1759577600.mp3"
+  ];
+  
+  function playRandomAudio() {  
+    const randomIndex = Math.floor(Math.random() * audioFiles.length);  
+    const audioElement = document.getElementById("audioPlayer");  
+    const audioSource = document.getElementById("audioSource");  
+
+    audioSource.src = audioFiles[randomIndex];  
+    audioElement.load();  
+    audioElement.play().catch(err => {  
+      console.log("Autoplay diblokir:", err);  
+    });  
+    const unmute = () => {  
+      audioElement.muted = false;  
+      audioElement.play();  
+      document.body.removeEventListener("click", unmute);  
+    };  
+    document.body.addEventListener("click", unmute);  
+  }  
+
+  window.onload = playRandomAudio;  
+</script>  
+
+<style>  
+  audio {  
+    display: none; /* sembunyikan kontrol */  
+  }  
+</style>
+</head>
+<body class="dark-theme">
+  <div class="floating-bg">
+    <div class="floating-element" style="width: 300px; height: 300px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+    <div class="floating-element" style="width: 200px; height: 200px; top: 60%; left: 80%; animation-delay: -5s;"></div>
+    <div class="floating-element" style="width: 150px; height: 150px; top: 30%; left: 60%; animation-delay: -10s;"></div>
+  </div>
+
+  <div class="container">
+    <header>
+      <div class="logo">
+        <div class="logo-icon">
+          <img src="https://od.lk/s/OV8yNDg5OTg2ODVf/234295443fee6ab371d2825d3026cfa0.jpg" alt="Telegram Bot Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div style="display: none; width: 100%; height: 100%; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; align-items: center; justify-content: center; color: white; font-size: 24px;">🤖</div>
+        </div>
+        <div class="logo-text">
+          <div class="main-title">Spam Telegram Bot </div>
+          <div class="sub-title">by GALIRUS OFFICIAL</div>
+        </div>
+      </div>
+      <button class="theme-toggle" id="toggleTheme">
+        <i>🌙</i> Mode Gelap
+      </button>
+    </header>
+
+    <div class="dashboard">
+      <div class="sidebar">
+        <div class="card">
+          <h2 class="card-title"><i>🔑</i> Token Bot</h2>
+          <div class="form-group">
+            <label for="tokenInput">Masukkan Token Bot Telegram</label>
+            <input type="text" id="tokenInput" placeholder="123456789:ABCdefGHIjklMNOpqrsTUVwxyz" />
+          </div>
+          <button class="btn btn-primary btn-full" onclick="validateToken()">
+            <i>✅</i> Validasi Token
+          </button>
+          <div id="validationResult" class="status-indicator status-pending" style="margin-top: 15px; display: none;">
+            <i>⏳</i> Token belum divalidasi
+          </div>
+        </div>
+
+        <div class="card" id="botInfoCard" style="display: none;">
+          <h2 class="card-title"><i>🤖</i> Info Bot</h2>
+          <div id="botInfoContent">
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="card hidden" id="mainMenuCard">
+          <div class="tabs">
+            <div class="tab active" data-tab="config">Konfigurasi Bot</div>
+            <div class="tab" data-tab="spam">Pengiriman Pesan</div>
+            <div class="tab" data-tab="connections">Koneksi Bot</div>
+            <div class="tab" data-tab="logs">Log Aktivitas</div>
+          </div>
+
+          <div class="tab-content active" id="configTab">
+            <h2 class="card-title"><i>⚙️</i> Pengaturan Bot</h2>
+            <div class="form-group">
+              <label for="option">Pilih Tindakan</label>
+              <select id="option">
+                <option value="1">Lihat Info Bot</option>
+                <option value="2">Ganti Nama Bot</option>
+                <option value="3">Ganti Deskripsi Panjang</option>
+                <option value="4">Ganti Bio Pendek</option>
+                <option value="5">Cek Nama</option>
+                <option value="6">Cek Deskripsi</option>
+                <option value="7">Cek Bio Pendek</option>
+              </select>
+            </div>
+
+            <div id="inputArea" style="display: none;">
+              <div class="form-group">
+                <label id="inputLabel"></label>
+                <input type="text" id="inputField" />
+              </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="executeOption()">
+              <i>🚀</i> Jalankan Perintah
+            </button>
+
+            <div class="result-box" id="result"></div>
+          </div>
+
+          <div class="tab-content" id="spamTab">
+            <h2 class="card-title"><i>📨</i> Pengiriman Pesan</h2>
+            <div class="form-group">
+              <label for="chatIdInput">ID Chat Tujuan</label>
+              <input type="text" id="chatIdInput" placeholder="Contoh: 123456789 atau -1001234567890" />
+            </div>
+            <button class="btn btn-secondary" onclick="validateChatId()">
+              <i>🔍</i> Validasi ID Chat
+            </button>
+            <div id="chatIdValidationResult" class="status-indicator status-pending" style="margin-top: 15px; display: none;">
+              <i>⏳</i> ID Chat belum divalidasi
+            </div>
+
+            <div id="spamControls" style="display: none; margin-top: 20px;">
+              <div class="form-group">
+                <label for="spamText">Pesan yang Akan Dikirim</label>
+                <textarea id="spamText" rows="3" placeholder="Masukkan pesan untuk dikirim"></textarea>
+              </div>
+
+              <div class="spam-controls">
+                <div class="form-group">
+                  <label for="spamCount">Jumlah Kiriman</label>
+                  <input type="number" id="spamCount" value="1" min="1" max="100" />
+                </div>
+                <div class="form-group">
+                  <label>Lampirkan Gambar (Opsional)</label>
+                  <div class="file-upload">
+                    <input type="file" id="spamPhoto" accept="image/*" />
+                    <div class="file-upload-label">
+                      <i>📷</i> Pilih Gambar
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="imagePreviewContainer" class="image-preview" style="display: none;">
+                <p>Preview Gambar:</p>
+                <img id="imagePreview" src="" alt="Preview gambar" />
+                <p id="imageInfo"></p>
+              </div>
+
+              <button class="btn btn-danger btn-full pulse" onclick="sendSpam()">
+                <i>🚀</i> Mulai Kirim Pesan
+              </button>
+
+              <div class="result-box" id="spamResult"></div>
+            </div>
+          </div>
+
+          <div class="tab-content" id="connectionsTab">
+            <h2 class="card-title"><i>🔗</i> Koneksi Bot</h2>
+            <p>Menampilkan chat ID yang berhasil divalidasi dan digunakan untuk mengirim pesan.</p>
+            
+            <div class="form-group">
+              <button class="btn btn-primary" onclick="loadRealConnections()">
+                <i>🔄</i> Muat Koneksi Real
+              </button>
+              <button class="btn btn-secondary" onclick="clearConnections()" style="margin-left: 10px;">
+                <i>🗑️</i> Hapus History
+              </button>
+            </div>
+            
+            <div id="connectionsLoading" class="loading" style="display: none;">
+              <div class="loading-spinner"></div>
+              <p>Memuat koneksi...</p>
+            </div>
+            
+            <div id="connectionsResult" class="result-box">
+              Klik "Muat Koneksi Real" untuk menampilkan chat ID yang pernah digunakan.
+            </div>
+            
+            <div class="connected-chats" id="connectedChats" style="display: none;">
+            </div>
+          </div>
+
+          <div class="tab-content" id="logsTab">
+            <h2 class="card-title"><i>📊</i> Log Aktivitas</h2>
+            <div class="result-box" id="logsResult">
+              Log aktivitas akan muncul di sini...
+            </div>
+            <button class="btn btn-secondary" style="margin-top: 15px;" onclick="refreshLogs()">
+              <i>🔄</i> Muat Ulang Log
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let TOKEN = '';
+    let messageCount = 0;
+    let activityLogs = [];
+    let chatConnections = [];
+
+    // API base URL
+    const API_BASE = '';
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const toggleBtn = document.getElementById('toggleTheme');
+      toggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-theme');
+        document.body.classList.toggle('light-theme');
+        
+        if(document.body.classList.contains('light-theme')) {
+          toggleBtn.innerHTML = '<i>☀️</i> Mode Terang';
+        } else {
+          toggleBtn.innerHTML = '<i>🌙</i> Mode Gelap';
+        }
+      });
+
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          
+          tab.classList.add('active');
+          const tabId = tab.getAttribute('data-tab') + 'Tab';
+          document.getElementById(tabId).classList.add('active');
+        });
+      });
+
+      const optionSelect = document.getElementById('option');
+      const inputArea = document.getElementById('inputArea');
+      const inputLabel = document.getElementById('inputLabel');
+      const inputField = document.getElementById('inputField');
+
+      optionSelect.addEventListener('change', () => {
+        const val = optionSelect.value;
+        if ([2,3,4].includes(parseInt(val))) {
+          inputArea.style.display = 'block';
+          inputLabel.textContent = getInputLabel(val);
+          inputField.value = '';
+        } else {
+          inputArea.style.display = 'none';
+          inputLabel.textContent = '';
+          inputField.value = '';
+        }
+      });
+
+      const fileInput = document.getElementById('spamPhoto');
+      fileInput.addEventListener('change', function(e) {
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        const previewImage = document.getElementById('imagePreview');
+        const imageInfo = document.getElementById('imageInfo');
+        
+        if (this.files && this.files[0]) {
+          const file = this.files[0];
+          const reader = new FileReader();
+          
+          reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            previewContainer.style.display = 'block';
+            imageInfo.textContent = `Nama: ${file.name} | Ukuran: ${(file.size / 1024).toFixed(2)} KB | Tipe: ${file.type}`;
+          }
+          
+          reader.readAsDataURL(file);
+        } else {
+          previewContainer.style.display = 'none';
+        }
+      });
+
+      initFloatingBackground();
+      loadConnectionsFromServer();
+    });
+
+    function getInputLabel(option) {
+      const labels = {
+        2: 'Masukkan nama bot baru:',
+        3: 'Masukkan deskripsi panjang baru:',
+        4: 'Masukkan bio pendek baru:'
+      };
+      return labels[option] || '';
+    }
+
+    function initFloatingBackground() {
+      const bg = document.querySelector('.floating-bg');
+      for (let i = 0; i < 5; i++) {
+        const element = document.createElement('div');
+        element.className = 'floating-element';
+        const size = Math.random() * 150 + 50;
+        element.style.width = `${size}px`;
+        element.style.height = `${size}px`;
+        element.style.top = `${Math.random() * 100}%`;
+        element.style.left = `${Math.random() * 100}%`;
+        element.style.animationDelay = `${-Math.random() * 15}s`;
+        bg.appendChild(element);
+      }
+    }
+
+    async function saveConnection(chatId, chatName = '', chatType = 'unknown') {
+      const connectionData = {
+        id: chatId,
+        name: chatName,
+        type: chatType
+      };
+
+      try {
+        const response = await fetch('/api/connections', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(connectionData)
+        });
+
+        if (response.ok) {
+          await loadConnectionsFromServer();
+        }
+      } catch (error) {
+        console.error('Gagal menyimpan koneksi:', error);
+      }
+    }
+
+    async function loadConnectionsFromServer() {
+      try {
+        const response = await fetch('/api/connections');
+        if (response.ok) {
+          chatConnections = await response.json();
+        }
+      } catch (error) {
+        console.error('Gagal memuat koneksi:', error);
+      }
+    }
+
+    async function validateToken() {
+      const validationResult = document.getElementById('validationResult');
+      const mainMenuCard = document.getElementById('mainMenuCard');
+      const tokenInput = document.getElementById('tokenInput').value.trim();
+      
+      if (!tokenInput) {
+        validationResult.innerHTML = '<i>❌</i> Token tidak boleh kosong!';
+        validationResult.className = 'status-indicator status-invalid';
+        validationResult.style.display = 'flex';
+        mainMenuCard.classList.add('hidden');
+        return;
+      }
+      
+      TOKEN = tokenInput;
+      validationResult.innerHTML = '<i>⏳</i> Memvalidasi token...';
+      validationResult.className = 'status-indicator status-pending';
+      validationResult.style.display = 'flex';
+      mainMenuCard.classList.add('hidden');
+
+      try {
+        const response = await fetch('/api/telegram', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            token: TOKEN,
+            endpoint: 'getMe',
+            method: 'GET'
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok) {
+          validationResult.innerHTML = '<i>✅</i> Token valid!';
+          validationResult.className = 'status-indicator status-valid';
+          
+          document.getElementById('botInfoCard').style.display = 'block';
+          mainMenuCard.classList.remove('hidden');
+          
+          updateBotInfo(data.result);
+          
+          activityLogs = [];
+          addToLog('Token berhasil divalidasi', 'success');
+        } else {
+          validationResult.innerHTML = '<i>❌</i> Token tidak valid. Silakan coba lagi.';
+          validationResult.className = 'status-indicator status-invalid';
+          mainMenuCard.classList.add('hidden');
+          addToLog('Token tidak valid', 'error');
+        }
+      } catch (error) {
+        validationResult.innerHTML = `<i>❌</i> Gagal menghubungi server: ${error.message}`;
+        validationResult.className = 'status-indicator status-invalid';
+        mainMenuCard.classList.add('hidden');
+        addToLog(`Gagal validasi token: ${error.message}`, 'error');
+      }
+    }
+
+    function updateBotInfo(botInfo) {
+      const botInfoContent = document.getElementById('botInfoContent');
+      botInfoContent.innerHTML = `
+        <p><strong>Nama:</strong> ${botInfo.first_name}</p>
+        <p><strong>Username:</strong> @${botInfo.username}</p>
+        <p><strong>ID:</strong> ${botInfo.id}</p>
+        <p><strong>Dapat Grup:</strong> ${botInfo.can_join_groups ? 'Ya' : 'Tidak'}</p>
+        <p><strong>Dapat PM:</strong> ${botInfo.can_read_all_group_messages ? 'Ya' : 'Tidak'}</p>
+      `;
+    }
+
+    async function executeOption() {
+      const resultArea = document.getElementById('result');
+      resultArea.textContent = '';
+      const opt = document.getElementById('option').value;
+      const endpoint = endpoints[opt];
+
+      let requestData = {
+        token: TOKEN,
+        endpoint: endpoint,
+        method: 'GET'
+      };
+
+      if ([2,3,4].includes(parseInt(opt))) {
+        const paramName = paramNames[opt];
+        const paramValue = document.getElementById('inputField').value.trim();
+        if (!paramValue) {
+          alert('Input tidak boleh kosong!');
+          return;
+        }
+        
+        requestData.method = 'POST';
+        requestData.params = {
+          [paramName]: paramValue
+        };
+      }
+
+      try {
+        const response = await fetch('/api/telegram', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestData)
+        });
+        
+        const data = await response.json();
+        resultArea.textContent = JSON.stringify(data, null, 2);
+        
+        const actionName = document.getElementById('option').options[document.getElementById('option').selectedIndex].text;
+        if (data.ok) {
+          addToLog(`Berhasil menjalankan: ${actionName}`, 'success');
+        } else {
+          addToLog(`Gagal menjalankan: ${actionName} - ${data.description}`, 'error');
+        }
+      } catch (err) {
+        resultArea.textContent = 'Terjadi kesalahan: ' + err.message;
+        addToLog(`Error: ${err.message}`, 'error');
+      }
+    }
+
+    async function validateChatId() {
+      const chatIdInput = document.getElementById('chatIdInput');
+      const chatIdValidationResult = document.getElementById('chatIdValidationResult');
+      const spamControls = document.getElementById('spamControls');
+      const chatId = chatIdInput.value.trim();
+      
+      if (!chatId) {
+        chatIdValidationResult.innerHTML = '<i>❌</i> Chat ID tidak boleh kosong!';
+        chatIdValidationResult.className = 'status-indicator status-invalid';
+        chatIdValidationResult.style.display = 'flex';
+        spamControls.style.display = 'none';
+        return;
+      }
+
+      chatIdValidationResult.innerHTML = '<i>⏳</i> Memeriksa chat ID...';
+      chatIdValidationResult.className = 'status-indicator status-pending';
+      chatIdValidationResult.style.display = 'flex';
+      spamControls.style.display = 'none';
+
+      try {
+        const response = await fetch('/api/send-message', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            token: TOKEN,
+            chatId: chatId,
+            text: 'Pesan validasi chat ID'
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok) {
+          chatIdValidationResult.innerHTML = '<i>✅</i> Chat ID valid!';
+          chatIdValidationResult.className = 'status-indicator status-valid';
+          spamControls.style.display = 'block';
+          
+          const chatType = chatId.startsWith('-100') ? 'supergroup' : 
+                          chatId.startsWith('-') ? 'group' : 'private';
+          await saveConnection(chatId, `Chat ${chatId}`, chatType);
+          
+          addToLog(`Chat ID ${chatId} berhasil divalidasi`, 'success');
+        } else {
+          chatIdValidationResult.innerHTML = `<i>❌</i> Chat ID tidak valid: ${data.description}`;
+          chatIdValidationResult.className = 'status-indicator status-invalid';
+          spamControls.style.display = 'none';
+          addToLog(`Chat ID ${chatId} tidak valid: ${data.description}`, 'error');
+        }
+      } catch (error) {
+        chatIdValidationResult.innerHTML = `<i>❌</i> Gagal menghubungi server: ${error.message}`;
+        chatIdValidationResult.className = 'status-indicator status-invalid';
+        spamControls.style.display = 'none';
+        addToLog(`Error validasi Chat ID: ${error.message}`, 'error');
+      }
+    }
+
+    async function sendSpam() {
+      const chatId = document.getElementById('chatIdInput').value.trim();
+      const text = document.getElementById('spamText').value.trim();
+      const fileInput = document.getElementById('spamPhoto');
+      const countInput = document.getElementById('spamCount');
+      const count = parseInt(countInput.value);
+      const spamResult = document.getElementById('spamResult');
+
+      if (!chatId || !text) {
+        alert('Chat ID dan teks pesan tidak boleh kosong!');
+        return;
+      }
+      
+      if (count <= 0 || count > 100) {
+        alert('Jumlah kirim spam harus antara 1 dan 100.');
+        return;
+      }
+
+      spamResult.textContent = 'Mengirim pesan...\n';
+      let successCount = 0;
+      let failCount = 0;
+      
+      for (let i = 0; i < count; i++) {
+        try {
+          let response;
+          
+          if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('token', TOKEN);
+            formData.append('chatId', chatId);
+            formData.append('text', text);
+            formData.append('photo', file);
+
+            response = await fetch('/api/send-message', {
+              method: 'POST',
+              body: formData
+            });
+          } else {
+            response = await fetch('/api/send-message', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                token: TOKEN,
+                chatId: chatId,
+                text: text
+              })
+            });
+          }
+          
+          const data = await response.json();
+          if (data.ok) {
+            const messageType = fileInput.files.length > 0 ? 'Foto & teks' : 'Teks';
+            spamResult.textContent += `(${i+1}) ${messageType} terkirim.\n`;
+            successCount++;
+            messageCount++;
+            
+            const chatType = chatId.startsWith('-100') ? 'supergroup' : 
+                            chatId.startsWith('-') ? 'group' : 'private';
+            await saveConnection(chatId, `Chat ${chatId}`, chatType);
+            
+            addToLog(`Pesan ${i+1} berhasil dikirim ke ${chatId}`, 'success');
+          } else {
+            spamResult.textContent += `(${i+1}) Gagal kirim: ${data.description}\n`;
+            failCount++;
+            addToLog(`Gagal kirim pesan ${i+1}: ${data.description}`, 'error');
+          }
+        } catch (error) {
+          spamResult.textContent += `(${i+1}) Error: ${error.message}\n`;
+          failCount++;
+          addToLog(`Error kirim pesan ${i+1}: ${error.message}`, 'error');
+        }
+        
+        await new Promise(res => setTimeout(res, 10));
+      }
+      
+      spamResult.textContent += `Selesai mengirim pesan.\nBerhasil: ${successCount}, Gagal: ${failCount}`;
+    }
+
+    async function loadRealConnections() {
+      const connectionsResult = document.getElementById('connectionsResult');
+      const connectedChats = document.getElementById('connectedChats');
+      const loading = document.getElementById('connectionsLoading');
+      
+      connectionsResult.style.display = 'none';
+      connectedChats.style.display = 'none';
+      loading.style.display = 'block';
+      
+      try {
+        await loadConnectionsFromServer();
+        
+        if (chatConnections.length === 0) {
+          connectionsResult.textContent = 'Belum ada koneksi yang tercatat. Gunakan fitur validasi chat ID atau kirim pesan untuk menambahkan koneksi.';
+          connectionsResult.style.display = 'block';
+        } else {
+          let html = '';
+          chatConnections.sort((a, b) => new Date(b.lastSeen) - new Date(a.lastSeen));
+          
+          chatConnections.forEach(chat => {
+            let icon = '👤';
+            let typeClass = 'chat-private';
+            let typeText = 'Private';
+            
+            if (chat.type === 'group') {
+              icon = '👥';
+              typeClass = 'chat-group';
+              typeText = 'Grup';
+            } else if (chat.type === 'supergroup') {
+              icon = '👥';
+              typeClass = 'chat-supergroup';
+              typeText = 'Supergroup';
+            } else if (chat.type === 'channel') {
+              icon = '📢';
+              typeClass = 'chat-channel';
+              typeText = 'Channel';
+            }
+            
+            const lastSeen = new Date(chat.lastSeen).toLocaleString('id-ID');
+            const firstSeen = new Date(chat.firstSeen).toLocaleDateString('id-ID');
+            
+            html += `
+              <div class="chat-item">
+                <div class="chat-icon">${icon}</div>
+                <div class="chat-info">
+                  <div class="chat-name">${chat.name || `Chat ${chat.id}`}</div>
+                  <div class="chat-id">ID: ${chat.id}</div>
+                  <div style="font-size: 11px; opacity: 0.7;">
+                    Pesan: ${chat.messageCount || 1} | 
+                    Pertama: ${firstSeen} | 
+                    Terakhir: ${lastSeen}
+                  </div>
+                </div>
+                <div class="chat-type ${typeClass}">${typeText}</div>
+              </div>
+            `;
+          });
+          
+          connectedChats.innerHTML = html;
+          connectedChats.style.display = 'block';
+          connectionsResult.textContent = `Ditemukan ${chatConnections.length} koneksi aktif`;
+        }
+      } catch (error) {
+        connectionsResult.textContent = `Error memuat koneksi: ${error.message}`;
+      }
+      
+      loading.style.display = 'none';
+      connectionsResult.style.display = 'block';
+      addToLog('Berhasil memuat koneksi real', 'success');
+    }
+
+    async function clearConnections() {
+      if (confirm('Apakah Anda yakin ingin menghapus semua history koneksi?')) {
+        try {
+          const response = await fetch('/api/connections', {
+            method: 'DELETE'
+          });
+          
+          if (response.ok) {
+            chatConnections = [];
+            document.getElementById('connectedChats').innerHTML = '';
+            document.getElementById('connectionsResult').textContent = 'History koneksi berhasil dihapus.';
+            addToLog('History koneksi dihapus', 'info');
+          }
+        } catch (error) {
+          alert('Gagal menghapus koneksi: ' + error.message);
+        }
+      }
+    }
+
+    function addToLog(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      const logEntry = {
+        timestamp,
+        message,
+        type
+      };
+      
+      activityLogs.unshift(logEntry);
+      
+      if (activityLogs.length > 50) {
+        activityLogs.pop();
+      }
+      
+      if (document.getElementById('logsTab').classList.contains('active')) {
+        refreshLogs();
+      }
+    }
+
+    function refreshLogs() {
+      const logsResult = document.getElementById('logsResult');
+      let logHTML = '';
+      
+      activityLogs.forEach(log => {
+        const icon = log.type === 'success' ? '✅' : log.type === 'error' ? '❌' : 'ℹ️';
+        logHTML += `[${log.timestamp}] ${icon} ${log.message}\n`;
+      });
+      
+      logsResult.textContent = logHTML || 'Belum ada aktivitas';
+    }
+
+    const endpoints = {
+      1: 'getMe',
+      2: 'setMyName',
+      3: 'setMyDescription',
+      4: 'setMyShortDescription',
+      5: 'getMyName',
+      6: 'getMyDescription',
+      7: 'getMyShortDescription'
+    };
+
+    const paramNames = {
+      2: 'name',
+      3: 'description',
+      4: 'short_description'
+    };
+  </script>
+</body>
+</html>
